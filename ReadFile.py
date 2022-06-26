@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[32]:
+# In[52]:
 
 
 import os
@@ -91,31 +91,43 @@ def NumberOfCameras(inputList):
 def SpeedingCheck(inputList):
     outputList = []
     multiplier = -1.0
+    speedingCount = 0;
     
-    while (multiplier < 0.0)
+    # GET SPEEDING INPUT FROM CONSOLE
+    while multiplier < 0:
         try:
             multiplier = float(input("Med hur många % skall hastigheten överskrida hastighetsbegränsningen för att visas?"))
         except:
             print("Skriv in en siffra...")
-            
-    multiplier /= 100
-    multiplier += 1
     
+    # CHECK FOR SPEEDING ENTRIES
     for i in range(1, len(inputList), 1):
-        speedLimit = inputList[i][1]
-        speedActual = inputList[i][2]
+        speedLimit = float(inputList[i][1])
+        speedActual = float(inputList[i][2])
         
-        if (speedActual >= (speedLimit * multiplier)):
+        # CHECK IF SPEED LIMIT IS EXCEEDED BY GIVEN AMOUNT
+        if (speedActual > (speedLimit * ((multiplier / 100) + 1))):
             outputList.append(inputList[i])
-        
+            speedingCount += 1
+            
+    # SORT LIST ON DATE COLUMN
+    outputList.sort(key = lambda x:x[4])
+    
+    # PRINT SPEEDING DATA TO CONSOLE
+    print("\nDet var " + str(speedingCount) + " överträdelser som var mer än " + str(multiplier) + "% över gällande hastighet.\n")
+    print(f'{"Tid":<16}{"Mätplats ID":<16}{"Gällande Hastighet":<24}{"Hastighet":<16}{"Datum":<16}')
+    print("========================================================================================")
+    for row in outputList:
+        print(f'{row[4]:<16}{row[0]:<16}{row[1]:<24}{row[2]:<16}{row[3]:<16}')        
     
 # HUVUDPROGRAM
 platsData = ReadFileCsv('platsData.csv')
 kameraData = ReadFileCsv('kameraData.csv')
     
-NumberOfCars(kameraData)
+#NumberOfCars(kameraData)
 
-NumberOfCameras(platsData)
+#NumberOfCameras(platsData)
+SpeedingCheck(kameraData)
 
 
 # In[ ]:
