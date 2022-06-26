@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[124]:
+# In[175]:
 
 
 import os
 import sys
 import csv
+import datetime
 import matplotlib.pyplot as plt
 import numpy as np
-
+ 
+# ================================================================
 # FUNCTION ReadFileCsv
 # LÄSER IN EN CSV FIL OCH RETURNERAR INNEHÅLLET SOM EN 2-DIMENSIONELL LISTA
 def ReadFileCsv(filename):
@@ -27,7 +29,8 @@ def ReadFileCsv(filename):
                 outputList.append(line)
                 
             return outputList
-         
+          
+# ================================================================
 # FUNCTION NUMBER OF CARS
 def NumberOfCars(inputList):
     
@@ -67,7 +70,8 @@ def NumberOfCars(inputList):
     plt.ylabel("Antal passerade fordon")
     plt.grid(True)
     plt.show()
-    
+     
+# ================================================================
 # FUNCTION NUMBER OF CAMERAS
 def NumberOfCameras(inputList):
     
@@ -97,7 +101,8 @@ def NumberOfCameras(inputList):
     print("================================================\n")
     
     #return areaDict
-    
+     
+# ================================================================
 # FUNCTION SPEEDING CHECK
 def SpeedingCheck(inputList, multiplier = -1.0, displayData = True):
     
@@ -137,7 +142,8 @@ def SpeedingCheck(inputList, multiplier = -1.0, displayData = True):
         
     # RETURN CREATED LIST
     return outputList
-    
+     
+# ================================================================
 # FUNCTION SPEEDING CHECK DIAGRAM
 def SpeedingCheckDiagram(inputList, multiplier):
     
@@ -178,7 +184,8 @@ def SpeedingCheckDiagram(inputList, multiplier):
     plt.barh(listTime, listSpeed, width1, color='b')
     plt.grid(True)
     plt.show()
-    
+     
+# ================================================================
 # FUNCTION SPEEDING BY AREA
 def SpeedingCheckArea(listSpeeding, listArea):
     
@@ -200,7 +207,34 @@ def SpeedingCheckArea(listSpeeding, listArea):
         print(f'{listSpeeding[j][4]:<16}{listSpeeding[j][0]:<16}{listSpeedingArea[j][3]:<20}{listSpeedingArea[j][2]:<16}{listSpeeding[j][2] + " km/h":<16}')
         
     print("========================================================================================\n")
+         
+# FUNCTION NUMBER OF CARS PER HOURS OF THE DAY
+def CarsPerHour(inputList, lowLimit = 7, highLimit = 17):
+    
+    hourList = []
+    carList = []
+    
+    for j in range(lowLimit, highLimit + 1, 1):
+        timetmp = datetime.time(j,0,0)
+        hourList.append(timetmp.strftime("%H:%M"))
+        carList.append(0)
+    
+    for i in range(1, len(inputList), 1):
+        time = inputList[i][4].split(":")
+        hour = int(time[0])
+        if (hour >= lowLimit) and (hour <= highLimit):
+            carList[hour - lowLimit] += 1     
         
+    plt.rcParams.update({'font.size': 16})
+    plt.figure(figsize=(16,16))
+    plt.title('Antal bilar passerade per timme')
+    plt.xlabel('Timmar')
+    plt.ylabel('Antal bilar')
+    plt.plot(hourList, carList)
+    plt.grid(True)
+    plt.show()    
+        
+# ================================================================
 # FUNCTION FIND INDEX IN 2D LIST
 def ListIndex2D(inputList, item):
     for i, x in enumerate(inputList):
@@ -216,21 +250,28 @@ def PrintFunctionBreak(name, length = 64):
     print(line)
     print()
     
+# ================================================================    
+# ================================================================    
+# ================================================================
 # HUVUDPROGRAM
+
 platsData = ReadFileCsv('platsData.csv')
 kameraData = ReadFileCsv('kameraData.csv')
+
+
     
-NumberOfCars(kameraData)
+#NumberOfCars(kameraData)
 #list01 = [[1,2,3,4],[3,4,5,6,7],[5,2,3,7,9]]
 #index = ListIndex2D(list01, 9)
 #print(index[1])
 #print(list01[index[0]][index[1]])
-speedingList = SpeedingCheck(kameraData, 70, False)
-SpeedingCheckArea(speedingList, platsData)
+#speedingList = SpeedingCheck(kameraData, 70, False)
+#SpeedingCheckArea(speedingList, platsData)
 
-NumberOfCameras(platsData)
+#NumberOfCameras(platsData)
 #SpeedingCheck(kameraData)
-SpeedingCheckDiagram(kameraData, 80)
+#peedingCheckDiagram(kameraData, 80)
+CarsPerHour(kameraData)
 
 
 # In[ ]:
