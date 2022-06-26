@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[54]:
+# In[97]:
 
 
 import os
 import sys
 import csv
 import matplotlib.pyplot as plt
+import numpy as np
 
 # FUNCTION ReadFileCsv
 # LÄSER IN EN CSV FIL OCH RETURNERAR INNEHÅLLET SOM EN 2-DIMENSIONELL LISTA
@@ -29,6 +30,7 @@ def ReadFileCsv(filename):
          
 # FUNCTION NUMBER OF CARS
 def NumberOfCars(inputList):
+    
     totalCars = 0
     outputList1 = []
     outputList2 = []
@@ -65,6 +67,7 @@ def NumberOfCars(inputList):
     
 # FUNCTION NUMBER OF CAMERAS
 def NumberOfCameras(inputList):
+    
     totalCameras = 0
     areaDict = {}
     
@@ -89,6 +92,7 @@ def NumberOfCameras(inputList):
     
 # FUNCTION SPEEDING CHECK
 def SpeedingCheck(inputList):
+    
     outputList = []
     multiplier = -1.0
     speedingCount = 0;
@@ -118,7 +122,46 @@ def SpeedingCheck(inputList):
     print(f'{"Tid":<16}{"Mätplats ID":<16}{"Gällande Hastighet":<24}{"Hastighet":<16}{"Datum":<16}')
     print("========================================================================================")
     for row in outputList:
-        print(f'{row[4]:<16}{row[0]:<16}{row[1]:<24}{row[2]:<16}{row[3]:<16}')        
+        print(f'{row[4]:<16}{row[0]:<16}{row[1]:<24}{row[2]:<16}{row[3]:<16}')    
+    
+# FUNCTION SPEEDING CHECK DIAGRAM
+def SpeedingCheckDiagram(inputList, multiplier):
+    
+    outputList = []    
+    listSpeed = []
+    listSpeeding = []
+    listTime = []    
+    
+    # CHECK FOR SPEEDING ENTRIES
+    for i in range(1, len(inputList), 1):
+        speedLimit = float(inputList[i][1])
+        speedActual = float(inputList[i][2])
+        
+        # CHECK IF SPEED LIMIT IS EXCEEDED BY GIVEN AMOUNT
+        if (speedActual > (speedLimit * ((multiplier / 100) + 1))):
+            outputList.append(inputList[i])
+            
+    # SORT LIST ON DATE COLUMN
+    outputList.sort(key = lambda x:x[4])
+    
+    # MAKE SEPARATE LISTS BY TYPE OF DATA
+    for j in range(0, len(outputList), 1):
+        listSpeed.append(float(outputList[j][1]))
+        listSpeeding.append(float(outputList[j][2]))
+        listTime.append(outputList[j][4])
+    
+    # PLOT DIAGRAM
+    width1 = 0.8
+    width2 = 0.5
+    plt.figure(figsize=(24,16))
+    plt.rcParams.update({'font.size': 24})
+    plt.title("Tidpunkter där gällande hastighet överskridits med mer än " + str(multiplier) + "%")
+    plt.xlabel("Hastighet km/h")
+    plt.ylabel("Tidpunkt")
+    plt.barh(listTime, listSpeeding, width2, color='r')
+    plt.barh(listTime, listSpeed, width1, color='b')
+    plt.grid(True)
+    plt.show()
     
 # HUVUDPROGRAM
 platsData = ReadFileCsv('platsData.csv')
@@ -126,8 +169,9 @@ kameraData = ReadFileCsv('kameraData.csv')
     
 #NumberOfCars(kameraData)
 
-NumberOfCameras(platsData)
+#NumberOfCameras(platsData)
 #SpeedingCheck(kameraData)
+SpeedingCheckDiagram(kameraData, 80)
 
 
 # In[ ]:
