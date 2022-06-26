@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[52]:
+# In[54]:
 
 
 import os
@@ -79,12 +79,12 @@ def NumberOfCameras(inputList):
             totalCameras += 1
     
     # PRINT DICTIONARY CONTENTS
-    print("Kommun\t\tAntal kameror")
-    print("================================================================")
+    print(f'{"Kommun":<24}{"Antal kameror":<24}')
+    print("================================================")
     for key in sorted(areaDict.keys()):
-        print(key + "\t\t" + str(areaDict[key]))
+        print(f'{key:<24}{str(areaDict[key]):<24}')
         
-    print("================================================================")
+    print("================================================")
     print("Det finns totalt " + str(totalCameras) + " kameror.")
     
 # FUNCTION SPEEDING CHECK
@@ -126,8 +126,8 @@ kameraData = ReadFileCsv('kameraData.csv')
     
 #NumberOfCars(kameraData)
 
-#NumberOfCameras(platsData)
-SpeedingCheck(kameraData)
+NumberOfCameras(platsData)
+#SpeedingCheck(kameraData)
 
 
 # In[ ]:
