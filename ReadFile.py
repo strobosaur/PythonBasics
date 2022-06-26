@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[104]:
+# In[124]:
 
 
 import os
@@ -35,6 +35,8 @@ def NumberOfCars(inputList):
     outputList1 = []
     outputList2 = []
     
+    PrintFunctionBreak("Hitta antal fordon som passerat per hastighetsbegränsning")
+    
     # FIND ALL SPEED LIMITS
     for i in range(1, len(inputList), 1):
         currentSpeed = int(inputList[i][1])
@@ -58,6 +60,7 @@ def NumberOfCars(inputList):
     print("Totalt passerade " + str(totalCars) + " bilar.")
     
     # PLOT DIAGRAM
+    plt.rcParams.update({'font.size': 14})
     plt.bar(outputList1, outputList2)
     plt.title("Antal fordon för varje gällande hastighet")
     plt.xlabel("Gällande hastighet")
@@ -70,6 +73,8 @@ def NumberOfCameras(inputList):
     
     totalCameras = 0
     areaDict = {}
+    
+    PrintFunctionBreak("Gör lista över antal fartkameror per kommun")
     
     # POPULATE DICTIONARY WITH CAMERA AND AREA DATA
     for i in range(1, len(inputList), 1):
@@ -89,14 +94,14 @@ def NumberOfCameras(inputList):
         
     print("================================================")
     print("Det finns totalt " + str(totalCameras) + " kameror.")
+    print("================================================\n")
     
-    return areaDict
+    #return areaDict
     
 # FUNCTION SPEEDING CHECK
-def SpeedingCheck(inputList):
+def SpeedingCheck(inputList, multiplier = -1.0, displayData = True):
     
     outputList = []
-    multiplier = -1.0
     speedingCount = 0;
     
     # GET SPEEDING INPUT FROM CONSOLE
@@ -119,12 +124,16 @@ def SpeedingCheck(inputList):
     # SORT LIST ON DATE COLUMN
     outputList.sort(key = lambda x:x[4])
     
-    # PRINT SPEEDING DATA TO CONSOLE
-    print("\nDet var " + str(speedingCount) + " överträdelser som var mer än " + str(multiplier) + "% över gällande hastighet.\n")
-    print(f'{"Tid":<16}{"Mätplats ID":<16}{"Gällande Hastighet":<24}{"Hastighet":<16}{"Datum":<16}')
-    print("========================================================================================")
-    for row in outputList:
-        print(f'{row[4]:<16}{row[0]:<16}{row[1]:<24}{row[2]:<16}{row[3]:<16}')
+    if displayData:            
+        # PRINT SPEEDING DATA TO CONSOLE
+        PrintFunctionBreak("Skapa lista över trafiköverträdelser av given procent")
+        print("\nDet var " + str(speedingCount) + " överträdelser som var mer än " + str(multiplier) + "% över gällande hastighet.\n")
+        print(f'{"Tid":<16}{"Mätplats ID":<16}{"Gällande Hastighet":<24}{"Hastighet":<16}{"Datum":<16}')
+        print("========================================================================================")
+        for row in outputList:
+            print(f'{row[4]:<16}{row[0]:<16}{row[1] + " km/h":<24}{row[2] + " km/h":<16}{row[3]:<16}')
+            
+        print("========================================================================================\n")
         
     # RETURN CREATED LIST
     return outputList
@@ -135,7 +144,9 @@ def SpeedingCheckDiagram(inputList, multiplier):
     outputList = []    
     listSpeed = []
     listSpeeding = []
-    listTime = []    
+    listTime = []   
+    
+    PrintFunctionBreak("Skapa diagram över hastighetsöverträdelser") 
     
     # CHECK FOR SPEEDING ENTRIES
     for i in range(1, len(inputList), 1):
@@ -173,28 +184,53 @@ def SpeedingCheckArea(listSpeeding, listArea):
     
     tempstring = ""
     listSpeedingArea = []
+    speedingCount = len(listSpeeding)
     
-    for i in range(0, listSpeeding, 1):
+    PrintFunctionBreak("Kontrollera hastighetsöverträdelser per kommun och väg")
+    
+    for i in range(0, len(listSpeeding), 1):
         tempstring = listSpeeding[i][0]
+        index = ListIndex2D(listArea, tempstring)
+        listSpeedingArea.append(listArea[index[0]])
+        
+    print("Hastighetsöverträdelserna skedde vid följande " + str(speedingCount) + " platser.\n")
+    print(f'{"Tid":<16}{"MätplatsID":<16}{"Kommun":<20}{"Vägnummer":<16}{"Hastighet":<16}')
+    print("========================================================================================")
+    for j in range(0, len(listSpeeding), 1):
+        print(f'{listSpeeding[j][4]:<16}{listSpeeding[j][0]:<16}{listSpeedingArea[j][3]:<20}{listSpeedingArea[j][2]:<16}{listSpeeding[j][2] + " km/h":<16}')
+        
+    print("========================================================================================\n")
         
 # FUNCTION FIND INDEX IN 2D LIST
 def ListIndex2D(inputList, item):
     for i, x in enumerate(inputList):
         if item in x:
             return i, x.index(item)
+        
+def PrintFunctionBreak(name, length = 64):
+    line = ""
+    for i in range(0, length, 1):
+        line += "="
+    print(line)
+    print(" *** " + name + " *** ")
+    print(line)
+    print()
     
 # HUVUDPROGRAM
 platsData = ReadFileCsv('platsData.csv')
 kameraData = ReadFileCsv('kameraData.csv')
     
-#NumberOfCars(kameraData)
+NumberOfCars(kameraData)
 #list01 = [[1,2,3,4],[3,4,5,6,7],[5,2,3,7,9]]
 #index = ListIndex2D(list01, 9)
 #print(index[1])
+#print(list01[index[0]][index[1]])
+speedingList = SpeedingCheck(kameraData, 70, False)
+SpeedingCheckArea(speedingList, platsData)
 
-#NumberOfCameras(platsData)
+NumberOfCameras(platsData)
 #SpeedingCheck(kameraData)
-#SpeedingCheckDiagram(kameraData, 80)
+SpeedingCheckDiagram(kameraData, 80)
 
 
 # In[ ]:
