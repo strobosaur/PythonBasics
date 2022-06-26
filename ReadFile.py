@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[97]:
+# In[104]:
 
 
 import os
@@ -90,6 +90,8 @@ def NumberOfCameras(inputList):
     print("================================================")
     print("Det finns totalt " + str(totalCameras) + " kameror.")
     
+    return areaDict
+    
 # FUNCTION SPEEDING CHECK
 def SpeedingCheck(inputList):
     
@@ -122,7 +124,10 @@ def SpeedingCheck(inputList):
     print(f'{"Tid":<16}{"Mätplats ID":<16}{"Gällande Hastighet":<24}{"Hastighet":<16}{"Datum":<16}')
     print("========================================================================================")
     for row in outputList:
-        print(f'{row[4]:<16}{row[0]:<16}{row[1]:<24}{row[2]:<16}{row[3]:<16}')    
+        print(f'{row[4]:<16}{row[0]:<16}{row[1]:<24}{row[2]:<16}{row[3]:<16}')
+        
+    # RETURN CREATED LIST
+    return outputList
     
 # FUNCTION SPEEDING CHECK DIAGRAM
 def SpeedingCheckDiagram(inputList, multiplier):
@@ -163,15 +168,33 @@ def SpeedingCheckDiagram(inputList, multiplier):
     plt.grid(True)
     plt.show()
     
+# FUNCTION SPEEDING BY AREA
+def SpeedingCheckArea(listSpeeding, listArea):
+    
+    tempstring = ""
+    listSpeedingArea = []
+    
+    for i in range(0, listSpeeding, 1):
+        tempstring = listSpeeding[i][0]
+        
+# FUNCTION FIND INDEX IN 2D LIST
+def ListIndex2D(inputList, item):
+    for i, x in enumerate(inputList):
+        if item in x:
+            return i, x.index(item)
+    
 # HUVUDPROGRAM
 platsData = ReadFileCsv('platsData.csv')
 kameraData = ReadFileCsv('kameraData.csv')
     
 #NumberOfCars(kameraData)
+#list01 = [[1,2,3,4],[3,4,5,6,7],[5,2,3,7,9]]
+#index = ListIndex2D(list01, 9)
+#print(index[1])
 
 #NumberOfCameras(platsData)
 #SpeedingCheck(kameraData)
-SpeedingCheckDiagram(kameraData, 80)
+#SpeedingCheckDiagram(kameraData, 80)
 
 
 # In[ ]:
